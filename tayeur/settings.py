@@ -10,7 +10,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-default-key-change-
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'tayeurdjango-3.onrender.com'
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
