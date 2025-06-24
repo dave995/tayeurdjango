@@ -11,7 +11,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-default-key-change-
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'tayeurdjango-3.onrender.com'
+    'tayeurdjango-3.onrender.com',
+    'tayeurgestions.netlify.app'
 ]
 
 INSTALLED_APPS = [
@@ -94,7 +95,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://tayeurdjango-3.onrender.com"
+    "https://tayeurdjango-3.onrender.com",
+    "https://tayeurgestions.netlify.app"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
