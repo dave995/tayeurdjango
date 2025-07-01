@@ -12,7 +12,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'tayeurdjango-3.onrender.com',
-    'tayeurgestions.netlify.app'
+    'tayeurgestions.netlify.app',
+    'localhost:5173/',
+    'localhost',
+    '127.0.0.1',
+    'localhost:8000',
 ]
 
 INSTALLED_APPS = [
@@ -27,6 +31,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'api',
     'rest_framework_simplejwt',
+    'chatgpt',
 ]
 
 MIDDLEWARE = [
@@ -62,8 +67,12 @@ WSGI_APPLICATION = 'tayeur.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'tayeur_db'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 

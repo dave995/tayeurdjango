@@ -13,14 +13,14 @@ class ReviewInline(admin.TabularInline):
 
 @admin.register(Workshop)
 class WorkshopAdmin(admin.ModelAdmin):
-    list_display = ('name', 'address', 'rating', 'price_range_display', 'delivery_time', 'logo_preview')
+    list_display = ('name', 'address', 'rating', 'price_range_display', 'delivery_time', 'logo_preview', 'user')
     list_filter = ('rating', 'specialties')
     search_fields = ('name', 'address', 'description')
     readonly_fields = ('logo_preview',)
     inlines = [WorkshopImageInline, ReviewInline]
     fieldsets = (
         ('Informations de base', {
-            'fields': ('name', 'description', 'logo', 'logo_preview', 'address')
+            'fields': ('name', 'description', 'logo', 'logo_preview', 'address', 'user')
         }),
         ('Détails professionnels', {
             'fields': ('rating', 'specialties', 'estimated_delivery_time')
@@ -43,6 +43,11 @@ class WorkshopAdmin(admin.ModelAdmin):
     def delivery_time(self, obj):
         return f"{obj.estimated_delivery_time} jours"
     delivery_time.short_description = 'Délai de livraison estimé'
+
+    def save_model(self, request, obj, form, change):
+        if not obj.user_id:
+            obj.user = request.user
+        super().save_model(request, obj, form, change)
 
 class ModelImageInline(admin.TabularInline):
     model = ModelImage
