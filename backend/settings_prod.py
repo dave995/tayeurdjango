@@ -2,6 +2,7 @@ from .settings import *
 import os
 import dj_database_url
 from pathlib import Path
+from decouple import config
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -14,11 +15,14 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 # Database - Utilisation de la base de données PostgreSQL de Vercel
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('POSTGRES_URL'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT', default='5432'),
+    }
 }
 
 # CORS settings
