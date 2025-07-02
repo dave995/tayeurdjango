@@ -70,6 +70,7 @@ class WorkshopSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)
     average_rating = serializers.SerializerMethodField()
     user = UserSerializer(read_only=True)
+    phone = serializers.SerializerMethodField()
 
     name = serializers.CharField(allow_null=True, required=False)
     description = serializers.CharField(allow_null=True, required=False)
@@ -91,11 +92,14 @@ class WorkshopSerializer(serializers.ModelSerializer):
                  'rating', 'specialties', 'estimated_delivery_time',
                  'price_range_min', 'price_range_max', 'is_verified',
                  'is_active', 'images', 'reviews', 'average_rating',
-                 'created_at', 'updated_at')
+                 'created_at', 'updated_at', 'phone')
         read_only_fields = ('rating', 'is_verified', 'created_at', 'updated_at')
 
     def get_average_rating(self, obj):
         return obj.average_rating()
+
+    def get_phone(self, obj):
+        return obj.user.phone if obj.user else None
 
 class ModelImageSerializer(serializers.ModelSerializer):
     class Meta:

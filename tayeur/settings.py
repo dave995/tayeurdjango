@@ -13,6 +13,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'tayeurdjango-3.onrender.com',
     'tayeurgestions.netlify.app',
+    'tayeurgestionv2.netlify.app',
     'localhost:5173/',
     'localhost',
     '127.0.0.1',
@@ -110,6 +111,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://tayeurdjango-3.onrender.com",
     "https://tayeurgestions.netlify.app"
+    "https://tayeurgestionv2.netlify.app"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
