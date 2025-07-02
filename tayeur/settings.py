@@ -110,7 +110,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://tayeurdjango-3.onrender.com",
-    "https://tayeurgestions.netlify.app"
+    "https://tayeurgestions.netlify.app",
     "https://tayeurgestionv2.netlify.app"
 ]
 
