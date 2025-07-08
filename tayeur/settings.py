@@ -150,3 +150,5 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'api.User'
+
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')

@@ -15,6 +15,10 @@ from .serializers import (
     MaterialSerializer, MaterialImageSerializer, StockMovementSerializer
 )
 from django.db.models import Q, F
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+import google.generativeai as genai
+from django.conf import settings
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -382,3 +386,16 @@ class StockMovementViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Optional: Check if the user has permission to create stock movements for this material
         serializer.save(created_by=self.request.user)
+
+class GenerateModelView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        prompt = request.data.get('prompt')
+        if not prompt:
+            return Response({'error': 'Prompt requis'}, status=400)
+
+        genai.configure(api_key=settings.GOOGLE_API_KEY)
+        model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(prompt)
+        return Response({'result': response.text})

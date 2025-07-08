@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested import routers
 from . import views
+from .views import GenerateModelView
 
 # Router principal
 router = DefaultRouter()
@@ -40,4 +41,8 @@ urlpatterns = [
     path('', include(order_router.urls)),
     path('', include(material_router.urls)),
     path('api-auth/', include('rest_framework.urls')),
+]
+
+urlpatterns += [
+    path('generate-model/', GenerateModelView.as_view(), name='generate-model'),
 ]
