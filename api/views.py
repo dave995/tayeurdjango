@@ -85,6 +85,27 @@ class WorkshopViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=['get'], url_path='stats')
+    def stats(self, request):
+        """
+        Retourne des statistiques globales sur les ateliers.
+        """
+        data = {
+            "total_workshops": Workshop.objects.count(),
+            "total_active_workshops": Workshop.objects.filter(is_active=True).count(),
+            # Ajoute d'autres stats ici si besoin
+        }
+        return Response(data)
+
+    @action(detail=False, methods=['get'], url_path='recent-orders')
+    def recent_orders(self, request):
+        """
+        Retourne les 10 dernières commandes (tous ateliers confondus).
+        """
+        recent_orders = Order.objects.order_by('-created_at')[:10]
+        serializer = OrderSerializer(recent_orders, many=True)
+        return Response(serializer.data)
+
 class ClothingModelViewSet(viewsets.ModelViewSet):
     queryset = ClothingModel.objects.filter(is_active=True)
     serializer_class = ClothingModelSerializer
