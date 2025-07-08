@@ -18,6 +18,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'localhost:8000',
+    'tayeurdjango.onrender.com'
 ]
 
 INSTALLED_APPS = [
@@ -111,7 +112,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://tayeurdjango-3.onrender.com",
     "https://tayeurgestions.netlify.app",
-    "https://tayeurgestionv2.netlify.app"
+    "https://tayeurgestionv2.netlify.app",
+    "https://tayeurdjango.onrender.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
