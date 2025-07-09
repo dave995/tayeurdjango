@@ -14,11 +14,15 @@ from .serializers import (
     OrderStatusUpdateSerializer, SupplierSerializer, MaterialCategorySerializer,
     MaterialSerializer, MaterialImageSerializer, StockMovementSerializer
 )
-from django.db.models import Q, F
+from django.db.models import Q, F, Count, Sum
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 import google.generativeai as genai
 from django.conf import settings
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.files.storage import default_storage
+import os
+from PIL import Image
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -109,6 +113,30 @@ class WorkshopViewSet(viewsets.ModelViewSet):
         recent_orders = Order.objects.order_by('-created_at')[:10]
         serializer = OrderSerializer(recent_orders, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['get'], url_path='clients-orders-count')
+    def clients_orders_count(self, request, pk=None):
+        workshop = self.get_object()
+        data = (
+            Order.objects
+            .filter(workshop=workshop)
+            .values('user__id', 'user__username', 'user__first_name', 'user__last_name')
+            .annotate(order_count=Count('id'))
+            .order_by('-order_count')
+        )
+        return Response(list(data))
+
+    @action(detail=True, methods=['get'], url_path='orders-stats')
+    def orders_stats(self, request, pk=None):
+        workshop = self.get_object()
+        total_orders = workshop.orders.count()
+        total_revenue = workshop.orders.aggregate(total=Sum('total_price'))['total'] or 0
+        pending_orders = workshop.orders.filter(status='pending').count()
+        return Response({
+            'total_orders': total_orders,
+            'total_revenue': total_revenue,
+            'pending_orders': pending_orders,
+        })
 
 class ClothingModelViewSet(viewsets.ModelViewSet):
     queryset = ClothingModel.objects.filter(is_active=True)
@@ -389,13 +417,37 @@ class StockMovementViewSet(viewsets.ModelViewSet):
 
 class GenerateModelView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
         prompt = request.data.get('prompt')
+        image = request.FILES.get('image')
+
         if not prompt:
             return Response({'error': 'Prompt requis'}, status=400)
 
+        image_path = None
+        img = None
+        if image:
+            save_dir = os.path.join(settings.MEDIA_ROOT, 'models')
+            os.makedirs(save_dir, exist_ok=True)
+            filename = default_storage.get_available_name(os.path.join('models', image.name))
+            file_path = os.path.join(settings.MEDIA_ROOT, filename)
+            with open(file_path, 'wb+') as destination:
+                for chunk in image.chunks():
+                    destination.write(chunk)
+            image_path = default_storage.url(filename)
+            img = Image.open(file_path)
+
         genai.configure(api_key=settings.GOOGLE_API_KEY)
-        model = genai.GenerativeModel('gemini-pro')
-        response = model.generate_content(prompt)
-        return Response({'result': response.text})
+        if img:
+            model = genai.GenerativeModel('gemini-pro-vision')
+            gemini_response = model.generate_content([prompt, img])
+        else:
+            model = genai.GenerativeModel('gemini-pro')
+            gemini_response = model.generate_content(prompt)
+
+        return Response({
+            'result': gemini_response.text,
+            'image_url': image_path
+        })
