@@ -13,6 +13,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('admin/', include('api.urls')),  # Ajout pour vues admin personnalisées
     path('api/', include('api.urls')),
     # Remove or comment out the old token auth URL
     # path('api/token/', obtain_auth_token, name='api_token_auth'),

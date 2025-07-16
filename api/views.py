@@ -23,6 +23,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.core.files.storage import default_storage
 import os
 from PIL import Image
+from django.shortcuts import render
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -451,3 +452,19 @@ class GenerateModelView(APIView):
             'result': gemini_response.text,
             'image_url': image_path
         })
+
+def modele_list(request):
+    modeles = ClothingModel.objects.all()
+    return render(request, 'admin/modele_list.html', {'modeles': modeles})
+
+def client_list(request):
+    clients = User.objects.filter(user_type='client')
+    return render(request, 'admin/client_list.html', {'clients': clients})
+
+def commande_list(request):
+    commandes = Order.objects.select_related('user').all()
+    return render(request, 'admin/commande_list.html', {'commandes': commandes})
+
+def atelier_list(request):
+    ateliers = Workshop.objects.select_related('user').all()
+    return render(request, 'admin/atelier_list.html', {'ateliers': ateliers})

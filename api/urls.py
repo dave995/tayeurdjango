@@ -45,4 +45,8 @@ urlpatterns = [
 
 urlpatterns += [
     path('generate-model/', GenerateModelView.as_view(), name='generate-model'),
+     path('admin/modele/', views.modele_list, name='modele_list'),
+    path('admin/client/', views.client_list, name='client_list'),
+    path('admin/commande/', views.commande_list, name='commande_list'),
+    path('admin/atelier/', views.atelier_list, name='atelier_list'),
 ]

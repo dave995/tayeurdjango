@@ -1,0 +1,60 @@
+{% extends "admin/base.html" %}
+{% block title %}Commandes - Admin{% endblock %}
+{% block page_title %}Liste des Commandes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 mb-0">Commandes</h2>
+    <a href="#" class="btn btn-primary">Ajouter une commande</a>
+</div>
+<table class="table table-hover table-bordered bg-white">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>Client</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for commande in commandes %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ commande.user.get_full_name|default:commande.user.username }}</td>
+            <td>{{ commande.created_at|date:"Y-m-d" }}</td>
+            <td>
+                {% if commande.status == 'delivered' %}
+                    <span class="badge bg-success">Livrée</span>
+                {% elif commande.status == 'in_progress' %}
+                    <span class="badge bg-warning text-dark">En cours</span>
+                {% elif commande.status == 'pending' %}
+                    <span class="badge bg-secondary">En attente</span>
+                {% elif commande.status == 'confirmed' %}
+                    <span class="badge bg-info text-dark">Confirmée</span>
+                {% elif commande.status == 'ready' %}
+                    <span class="badge bg-primary">Prête</span>
+                {% elif commande.status == 'cancelled' %}
+                    <span class="badge bg-danger">Annulée</span>
+                {% else %}
+                    <span class="badge bg-light text-dark">{{ commande.get_status_display }}</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="#" class="btn btn-sm btn-warning">Modifier</a>
+                <a href="#" class="btn btn-sm btn-danger">Supprimer</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center">Aucune commande trouvée.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<nav>
+    <ul class="pagination justify-content-end">
+        <li class="page-item disabled"><a class="page-link" href="#">Précédent</a></li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">Suivant</a></li>
+    </ul>
+</nav>
+{% endblock %} 
