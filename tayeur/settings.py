@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework_simplejwt',
     'chatgpt',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

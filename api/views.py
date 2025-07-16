@@ -24,6 +24,17 @@ from django.core.files.storage import default_storage
 import os
 from PIL import Image
 from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django import forms
+from .models import ClothingModel
+from django.contrib.auth import get_user_model
+User = get_user_model()
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import Order, ClothingModel, Workshop, Measurements
+from django.forms import ModelForm
+from .models import Workshop
+from .models import ModelImage
+from django.forms import modelformset_factory
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -453,6 +464,12 @@ class GenerateModelView(APIView):
             'image_url': image_path
         })
 
+class ClothingModelForm(forms.ModelForm):
+    class Meta:
+        model = ClothingModel
+        fields = ['name', 'category', 'description', 'price', 'estimated_time', 'featured', 'styles', 'is_active', 'model_3d_url']
+
+
 def modele_list(request):
     modeles = ClothingModel.objects.all()
     return render(request, 'admin/modele_list.html', {'modeles': modeles})
@@ -468,3 +485,180 @@ def commande_list(request):
 def atelier_list(request):
     ateliers = Workshop.objects.select_related('user').all()
     return render(request, 'admin/atelier_list.html', {'ateliers': ateliers})
+
+class ModelImageForm(forms.ModelForm):
+    class Meta:
+        model = ModelImage
+        fields = ['image', 'is_preview', 'order']
+
+ModelImageFormSet = modelformset_factory(ModelImage, form=ModelImageForm, extra=3, can_delete=True)
+
+
+def modele_add(request):
+    if request.method == 'POST':
+        form = ClothingModelForm(request.POST)
+        formset = ModelImageFormSet(request.POST, request.FILES, queryset=ModelImage.objects.none())
+        if form.is_valid() and formset.is_valid():
+            modele = form.save()
+            for image_form in formset:
+                if image_form.cleaned_data and not image_form.cleaned_data.get('DELETE', False):
+                    image = image_form.save(commit=False)
+                    image.model = modele
+                    image.save()
+            return redirect('modele_list')
+    else:
+        form = ClothingModelForm()
+        formset = ModelImageFormSet(queryset=ModelImage.objects.none())
+    return render(request, 'admin/modele_form.html', {'form': form, 'formset': formset})
+
+
+def modele_edit(request, pk):
+    modele = get_object_or_404(ClothingModel, pk=pk)
+    if request.method == 'POST':
+        form = ClothingModelForm(request.POST, instance=modele)
+        formset = ModelImageFormSet(request.POST, request.FILES, queryset=ModelImage.objects.filter(model=modele))
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            for image_form in formset:
+                if image_form.cleaned_data:
+                    if image_form.cleaned_data.get('DELETE', False):
+                        if image_form.instance.pk:
+                            image_form.instance.delete()
+                    else:
+                        image = image_form.save(commit=False)
+                        image.model = modele
+                        image.save()
+            return redirect('modele_list')
+    else:
+        form = ClothingModelForm(instance=modele)
+        formset = ModelImageFormSet(queryset=ModelImage.objects.filter(model=modele))
+    return render(request, 'admin/modele_form.html', {'form': form, 'formset': formset, 'edit': True, 'modele': modele})
+
+
+def modele_delete(request, pk):
+    modele = get_object_or_404(ClothingModel, pk=pk)
+    if request.method == 'POST':
+        modele.delete()
+        return redirect('modele_list')
+    return render(request, 'admin/modele_confirm_delete.html', {'modele': modele})
+
+class ClientForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'phone', 'address', 'profile_picture']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.user_type = 'client'
+        if commit:
+            user.save()
+        return user
+
+class ClientEditForm(UserChangeForm):
+    password = None  # Hide password field
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'phone', 'address', 'profile_picture']
+
+
+def client_add(request):
+    if request.method == 'POST':
+        form = ClientForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('client_list')
+    else:
+        form = ClientForm()
+    return render(request, 'admin/client_form.html', {'form': form})
+
+
+def client_edit(request, pk):
+    client = get_object_or_404(User, pk=pk, user_type='client')
+    if request.method == 'POST':
+        form = ClientEditForm(request.POST, request.FILES, instance=client)
+        if form.is_valid():
+            form.save()
+            return redirect('client_list')
+    else:
+        form = ClientEditForm(instance=client)
+    return render(request, 'admin/client_form.html', {'form': form, 'edit': True, 'client': client})
+
+
+def client_delete(request, pk):
+    client = get_object_or_404(User, pk=pk, user_type='client')
+    if request.method == 'POST':
+        client.delete()
+        return redirect('client_list')
+    return render(request, 'admin/client_confirm_delete.html', {'client': client})
+
+class OrderForm(ModelForm):
+    class Meta:
+        model = Order
+        fields = ['user', 'model', 'workshop', 'measurements', 'status', 'total_price', 'estimated_delivery', 'notes', 'payment_status', 'payment_method']
+
+
+def commande_add(request):
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('commande_list')
+    else:
+        form = OrderForm()
+    return render(request, 'admin/commande_form.html', {'form': form})
+
+
+def commande_edit(request, pk):
+    commande = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        form = OrderForm(request.POST, instance=commande)
+        if form.is_valid():
+            form.save()
+            return redirect('commande_list')
+    else:
+        form = OrderForm(instance=commande)
+    return render(request, 'admin/commande_form.html', {'form': form, 'edit': True, 'commande': commande})
+
+
+def commande_delete(request, pk):
+    commande = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        commande.delete()
+        return redirect('commande_list')
+    return render(request, 'admin/commande_confirm_delete.html', {'commande': commande})
+
+class WorkshopForm(ModelForm):
+    class Meta:
+        model = Workshop
+        fields = ['user', 'name', 'description', 'logo', 'address', 'rating', 'specialties', 'estimated_delivery_time', 'price_range_min', 'price_range_max', 'is_verified', 'is_active']
+
+
+def atelier_add(request):
+    if request.method == 'POST':
+        form = WorkshopForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('atelier_list')
+    else:
+        form = WorkshopForm()
+    return render(request, 'admin/atelier_form.html', {'form': form})
+
+
+def atelier_edit(request, pk):
+    atelier = get_object_or_404(Workshop, pk=pk)
+    if request.method == 'POST':
+        form = WorkshopForm(request.POST, request.FILES, instance=atelier)
+        if form.is_valid():
+            form.save()
+            return redirect('atelier_list')
+    else:
+        form = WorkshopForm(instance=atelier)
+    return render(request, 'admin/atelier_form.html', {'form': form, 'edit': True, 'atelier': atelier})
+
+
+def atelier_delete(request, pk):
+    atelier = get_object_or_404(Workshop, pk=pk)
+    if request.method == 'POST':
+        atelier.delete()
+        return redirect('atelier_list')
+    return render(request, 'admin/atelier_confirm_delete.html', {'atelier': atelier})

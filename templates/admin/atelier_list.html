@@ -4,7 +4,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="h5 mb-0">Ateliers</h2>
-    <a href="#" class="btn btn-primary">Ajouter un atelier</a>
+    <a href="{% url 'atelier_add' %}" class="btn btn-primary">Ajouter un atelier</a>
 </div>
 <table class="table table-hover table-bordered bg-white">
     <thead class="table-light">
@@ -24,8 +24,8 @@
             <td>{{ atelier.user.get_full_name|default:atelier.user.username }}</td>
             <td>{{ atelier.address }}</td>
             <td>
-                <a href="#" class="btn btn-sm btn-warning">Modifier</a>
-                <a href="#" class="btn btn-sm btn-danger">Supprimer</a>
+                <a href="{% url 'atelier_edit' atelier.pk %}" class="btn btn-sm btn-warning">Modifier</a>
+                <a href="{% url 'atelier_delete' atelier.pk %}" class="btn btn-sm btn-danger">Supprimer</a>
             </td>
         </tr>
         {% empty %}

@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+{% load widget_tweaks %}
+{% block title %}{% if edit %}Modifier{% else %}Ajouter{% endif %} un client - Admin{% endblock %}
+{% block page_title %}{% if edit %}Modifier{% else %}Ajouter{% endif %} un client{% endblock %}
+{% block content %}
+<div class="container" style="max-width: 700px;">
+    <h2 class="h5 mb-3">{% if edit %}Modifier{% else %}Nouveau{% endif %} client</h2>
+    <form method="post" enctype="multipart/form-data" class="bg-white p-4 rounded shadow-sm">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}</label>
+                {{ field|add_class:"form-control" }}
+                {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{% url 'client_list' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %} 

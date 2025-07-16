@@ -1,19 +1,24 @@
-#site-name a {
-  color: #E83538 !important;
-  font-weight: bold;
+/* custom.css - Style sobre et moderne pour l'admin */
+body {
+    background-color: #f8f9fa;
 }
-input[type=submit], .button, .submit-row input {
-  background: #E83538 !important;
-  border: none !important;
-  color: #fff !important;
-  font-weight: bold;
-  border-radius: 6px;
-  padding: 8px 18px;
-  transition: background 0.2s;
+.bg-white {
+    background-color: #fff !important;
 }
-input[type=submit]:hover, .button:hover, .submit-row input:hover {
-  background: #b71c1c !important;
+.form-label {
+    font-weight: 500;
 }
-h2, .module caption {
-  color: #E83538 !important;
+.btn-primary {
+    background-color: #23305e;
+    border-color: #23305e;
+}
+.btn-primary:hover {
+    background-color: #1a2235;
+    border-color: #1a2235;
+}
+.sidebar {
+    box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+}
+.table {
+    background: #fff;
 } 

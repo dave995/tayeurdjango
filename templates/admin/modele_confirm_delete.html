@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block title %}Supprimer un modèle - Admin{% endblock %}
+{% block page_title %}Supprimer un modèle{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="h5 mb-3">Confirmer la suppression</h2>
+    <p>Voulez-vous vraiment supprimer le modèle <strong>{{ modele.name }}</strong> ?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+        <a href="{% url 'modele_list' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %} 

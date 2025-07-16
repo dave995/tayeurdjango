@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block title %}Supprimer un atelier - Admin{% endblock %}
+{% block page_title %}Supprimer un atelier{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="h5 mb-3">Confirmer la suppression</h2>
+    <p>Voulez-vous vraiment supprimer l'atelier <strong>{{ atelier.name }}</strong> ?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+        <a href="{% url 'atelier_list' %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %} 
