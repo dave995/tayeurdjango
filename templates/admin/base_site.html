@@ -1,0 +1,64 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="{% static 'admin/custom.css' %}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+{% endblock %}
+
+{% block extrahead %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block branding %}
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <img src="/static/logo-tayeur.png" alt="Logo Tayeur" style="height: 40px; border-radius: 8px; background: #fff; padding: 2px;"/>
+    <h1 id="site-name" style="font-size: 2rem; font-weight: bold; color: #E83538; margin: 0;">
+      <a href="{% url 'admin:index' %}" style="color: #E83538; text-decoration: none;">Tayeur Gestion Admin</a>
+    </h1>
+  </div>
+{% endblock %}
+
+{% block nav-global %}
+  <div style="margin-top: 1rem; font-size: 1.1rem;">
+    Bienvenue sur votre espace d'administration personnalisé !
+  </div>
+{% endblock %}
+
+{% block bodyclass %}d-flex{% endblock %}
+
+{% block content %}
+  <div class="d-flex" style="min-height: 100vh;">
+    <nav class="sidebar bg-light border-end" style="width: 220px; min-height: 100vh;">
+      <ul class="nav flex-column py-4 px-2">
+        <li class="nav-item mb-2">
+          <a class="nav-link fw-bold" href="{% url 'admin:index' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="/admin/api/clothingmodel/">Modèles</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="/admin/api/order/">Commandes</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="/admin/api/user/">Clients</a>
+        </li>
+        <li class="nav-item mb-2">
+          <a class="nav-link" href="/admin/api/workshop/">Ateliers</a>
+        </li>
+        <li class="nav-item mt-4">
+          <a class="nav-link text-danger" href="/admin/logout/">Déconnexion</a>
+        </li>
+      </ul>
+    </nav>
+    <main class="flex-grow-1 p-4">
+      {{ block.super }}
+    </main>
+  </div>
+{% endblock %}
+
+{% block footer %}
+  <div style="text-align: center; color: #888; margin-top: 2rem;">
+    &copy; {{ current_year|default:2024 }} Tayeur Gestion. Tous droits réservés.
+  </div>
+{% endblock %} 

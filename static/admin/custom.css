@@ -1,0 +1,19 @@
+#site-name a {
+  color: #E83538 !important;
+  font-weight: bold;
+}
+input[type=submit], .button, .submit-row input {
+  background: #E83538 !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 8px 18px;
+  transition: background 0.2s;
+}
+input[type=submit]:hover, .button:hover, .submit-row input:hover {
+  background: #b71c1c !important;
+}
+h2, .module caption {
+  color: #E83538 !important;
+} 

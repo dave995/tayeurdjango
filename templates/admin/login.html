@@ -1,0 +1,11 @@
+{% extends "admin/login.html" %}
+{% load static %}
+
+{% block content %}
+  <div style="text-align:center; margin-top: 3rem;">
+    <img src="{% static 'logo-tayeur.png' %}" alt="Logo Tayeur" style="height: 60px; margin-bottom: 1rem;" />
+    <h2 style="color: #E83538;">Connexion à l’espace d’administration Tayeur</h2>
+    <p style="color: #888;">Merci d’entrer vos identifiants pour accéder au back office.</p>
+  </div>
+  {{ block.super }}
+{% endblock %} 
