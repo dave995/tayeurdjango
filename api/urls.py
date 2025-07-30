@@ -40,6 +40,7 @@ urlpatterns = [
     path('', include(model_router.urls)),
     path('', include(order_router.urls)),
     path('', include(material_router.urls)),
+    # Authentification session/cookie DRF
     path('api-auth/', include('rest_framework.urls')),
 ]
 

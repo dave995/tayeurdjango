@@ -35,6 +35,7 @@ from django.forms import ModelForm
 from .models import Workshop
 from .models import ModelImage
 from django.forms import modelformset_factory
+from django.contrib.auth.decorators import login_required
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -470,18 +471,22 @@ class ClothingModelForm(forms.ModelForm):
         fields = ['name', 'category', 'description', 'price', 'estimated_time', 'featured', 'styles', 'is_active', 'model_3d_url']
 
 
+@login_required
 def modele_list(request):
     modeles = ClothingModel.objects.all()
     return render(request, 'admin/modele_list.html', {'modeles': modeles})
 
+@login_required
 def client_list(request):
     clients = User.objects.filter(user_type='client')
     return render(request, 'admin/client_list.html', {'clients': clients})
 
+@login_required
 def commande_list(request):
     commandes = Order.objects.select_related('user').all()
     return render(request, 'admin/commande_list.html', {'commandes': commandes})
 
+@login_required
 def atelier_list(request):
     ateliers = Workshop.objects.select_related('user').all()
     return render(request, 'admin/atelier_list.html', {'ateliers': ateliers})
@@ -494,6 +499,7 @@ class ModelImageForm(forms.ModelForm):
 ModelImageFormSet = modelformset_factory(ModelImage, form=ModelImageForm, extra=3, can_delete=True)
 
 
+@login_required
 def modele_add(request):
     if request.method == 'POST':
         form = ClothingModelForm(request.POST)
@@ -512,6 +518,7 @@ def modele_add(request):
     return render(request, 'admin/modele_form.html', {'form': form, 'formset': formset})
 
 
+@login_required
 def modele_edit(request, pk):
     modele = get_object_or_404(ClothingModel, pk=pk)
     if request.method == 'POST':
@@ -535,6 +542,7 @@ def modele_edit(request, pk):
     return render(request, 'admin/modele_form.html', {'form': form, 'formset': formset, 'edit': True, 'modele': modele})
 
 
+@login_required
 def modele_delete(request, pk):
     modele = get_object_or_404(ClothingModel, pk=pk)
     if request.method == 'POST':
@@ -561,6 +569,7 @@ class ClientEditForm(UserChangeForm):
         fields = ['username', 'first_name', 'last_name', 'email', 'phone', 'address', 'profile_picture']
 
 
+@login_required
 def client_add(request):
     if request.method == 'POST':
         form = ClientForm(request.POST, request.FILES)
@@ -572,6 +581,7 @@ def client_add(request):
     return render(request, 'admin/client_form.html', {'form': form})
 
 
+@login_required
 def client_edit(request, pk):
     client = get_object_or_404(User, pk=pk, user_type='client')
     if request.method == 'POST':
@@ -584,6 +594,7 @@ def client_edit(request, pk):
     return render(request, 'admin/client_form.html', {'form': form, 'edit': True, 'client': client})
 
 
+@login_required
 def client_delete(request, pk):
     client = get_object_or_404(User, pk=pk, user_type='client')
     if request.method == 'POST':
@@ -597,6 +608,7 @@ class OrderForm(ModelForm):
         fields = ['user', 'model', 'workshop', 'measurements', 'status', 'total_price', 'estimated_delivery', 'notes', 'payment_status', 'payment_method']
 
 
+@login_required
 def commande_add(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -608,6 +620,7 @@ def commande_add(request):
     return render(request, 'admin/commande_form.html', {'form': form})
 
 
+@login_required
 def commande_edit(request, pk):
     commande = get_object_or_404(Order, pk=pk)
     if request.method == 'POST':
@@ -620,6 +633,7 @@ def commande_edit(request, pk):
     return render(request, 'admin/commande_form.html', {'form': form, 'edit': True, 'commande': commande})
 
 
+@login_required
 def commande_delete(request, pk):
     commande = get_object_or_404(Order, pk=pk)
     if request.method == 'POST':
@@ -633,6 +647,7 @@ class WorkshopForm(ModelForm):
         fields = ['user', 'name', 'description', 'logo', 'address', 'rating', 'specialties', 'estimated_delivery_time', 'price_range_min', 'price_range_max', 'is_verified', 'is_active']
 
 
+@login_required
 def atelier_add(request):
     if request.method == 'POST':
         form = WorkshopForm(request.POST, request.FILES)
@@ -644,6 +659,7 @@ def atelier_add(request):
     return render(request, 'admin/atelier_form.html', {'form': form})
 
 
+@login_required
 def atelier_edit(request, pk):
     atelier = get_object_or_404(Workshop, pk=pk)
     if request.method == 'POST':
@@ -656,6 +672,7 @@ def atelier_edit(request, pk):
     return render(request, 'admin/atelier_form.html', {'form': form, 'edit': True, 'atelier': atelier})
 
 
+@login_required
 def atelier_delete(request, pk):
     atelier = get_object_or_404(Workshop, pk=pk)
     if request.method == 'POST':
