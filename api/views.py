@@ -52,7 +52,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny()]
         # Allow authenticated users to access their own details via /me/
         elif self.action == 'me':
-             return [permissions.IsAuthenticated()]
+             return [permissions.AllowAny()]  # Temporairement permis pour debug
         # For other actions (list, retrieve, update, delete), require authentication
         # You might want stricter permissions here depending on your needs
         return [permissions.IsAuthenticated()]
@@ -63,8 +63,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.user.is_authenticated:
             serializer = self.get_serializer(request.user)
             return Response(serializer.data)
-        # Should not reach here due to IsAuthenticated permission, but good practice
-        return Response({'detail': 'Authentication credentials were not provided.'}, status=status.HTTP_401_UNAUTHORIZED)
+        # Temporairement retourner null pour debug
+        return Response({'detail': 'User not authenticated'}, status=status.HTTP_200_OK)
 
     def get_queryset(self):
         # Limit queryset for non-admin users if they are not accessing /me/
