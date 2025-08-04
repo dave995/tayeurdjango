@@ -56,14 +56,24 @@ class WorkshopImageSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     user_name = serializers.SerializerMethodField()
+    user_first_name = serializers.CharField(source='user.first_name', read_only=True)
+    user_last_name = serializers.CharField(source='user.last_name', read_only=True)
+    user_email = serializers.CharField(source='user.email', read_only=True)
 
     class Meta:
         model = Review
-        fields = ('id', 'user', 'user_name', 'rating', 'comment', 'date', 'is_verified')
+        fields = ('id', 'user', 'user_name', 'user_first_name', 'user_last_name', 'user_email', 'rating', 'comment', 'date', 'is_verified')
         read_only_fields = ('user', 'date', 'is_verified')
 
     def get_user_name(self, obj):
-        return f"{obj.user.first_name} {obj.user.last_name}"
+        if obj.user.first_name and obj.user.last_name:
+            return f"{obj.user.first_name} {obj.user.last_name}"
+        elif obj.user.first_name:
+            return obj.user.first_name
+        elif obj.user.last_name:
+            return obj.user.last_name
+        else:
+            return obj.user.username
 
 class WorkshopSerializer(serializers.ModelSerializer):
     images = WorkshopImageSerializer(many=True, read_only=True)

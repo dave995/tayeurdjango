@@ -120,7 +120,21 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
+
+# Configuration des cookies de session
+SESSION_COOKIE_SECURE = False  # True en production avec HTTPS
+SESSION_COOKIE_HTTPONLY = False  # Permettre l'accès JavaScript
+SESSION_COOKIE_SAMESITE = 'Lax'  # Compatible avec CORS
+SESSION_COOKIE_DOMAIN = None  # Utiliser le domaine par défaut
+
+# Configuration CSRF
+CSRF_COOKIE_SECURE = False  # True en production avec HTTPS
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_DOMAIN = None
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
