@@ -98,11 +98,11 @@ class WorkshopSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workshop
-        fields = ('id', 'user', 'name', 'description', 'logo', 'address',
+        fields = ('id', 'user', 'name', 'description', 'logo', 'address', 'phone',
                  'rating', 'specialties', 'estimated_delivery_time',
                  'price_range_min', 'price_range_max', 'is_verified',
                  'is_active', 'images', 'reviews', 'average_rating',
-                 'created_at', 'updated_at', 'phone')
+                 'created_at', 'updated_at')
         read_only_fields = ('rating', 'is_verified', 'created_at', 'updated_at')
 
     def get_average_rating(self, obj):

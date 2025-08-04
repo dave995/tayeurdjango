@@ -679,3 +679,66 @@ def atelier_delete(request, pk):
         atelier.delete()
         return redirect('atelier_list')
     return render(request, 'admin/atelier_confirm_delete.html', {'atelier': atelier})
+
+# Vues d'authentification JWT
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        
+        # Ajouter des informations supplémentaires au token
+        data['user_id'] = self.user.id
+        data['username'] = self.user.username
+        data['email'] = self.user.email
+        data['first_name'] = self.user.first_name
+        data['last_name'] = self.user.last_name
+        data['user_type'] = getattr(self.user, 'user_type', 'client')
+        
+        return data
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register_user(request):
+    """Inscription d'un nouvel utilisateur avec génération automatique de token"""
+    from .serializers import UserRegistrationSerializer
+    
+    serializer = UserRegistrationSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        
+        # Générer les tokens JWT
+        refresh = RefreshToken.for_user(user)
+        
+        return Response({
+            'user': UserSerializer(user).data,
+            'tokens': {
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+            },
+            'message': 'Utilisateur créé avec succès'
+        }, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def logout_user(request):
+    """Déconnexion - invalider le token"""
+    try:
+        refresh_token = request.data.get('refresh_token')
+        if refresh_token:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+        
+        return Response({'message': 'Déconnexion réussie'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': 'Token invalide'}, status=status.HTTP_400_BAD_REQUEST)

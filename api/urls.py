@@ -42,6 +42,12 @@ urlpatterns = [
     path('', include(material_router.urls)),
     # Authentification session/cookie DRF
     path('api-auth/', include('rest_framework.urls')),
+    
+    # Authentification JWT
+    path('auth/login/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/refresh/', views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/register/', views.register_user, name='register_user'),
+    path('auth/logout/', views.logout_user, name='logout_user'),
 ]
 
 urlpatterns += [

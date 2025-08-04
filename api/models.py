@@ -37,6 +37,7 @@ class Workshop(models.Model):
     description = models.TextField()
     logo = models.ImageField(upload_to='workshops/logos/')
     address = models.CharField(max_length=200)
+    phone = models.CharField(max_length=15, blank=True, help_text="Numéro de téléphone de l'atelier")
     rating = models.FloatField(
         validators=[MinValueValidator(0), MaxValueValidator(5)],
         default=0
