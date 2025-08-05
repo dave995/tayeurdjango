@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'tayeurdjango-3.onrender.com',
+    'tayeurdjango-4.onrender.com',
     'tayeurgestions.netlify.app',
     'tayeurgestionv2.netlify.app',
     'localhost:5173/',
