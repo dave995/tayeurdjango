@@ -32,6 +32,31 @@ class User(AbstractUser):
     )
 
 class Workshop(models.Model):
+    SPECIALTY_CHOICES = [
+        ('costume', 'Costume'),
+        ('robe', 'Robe'),
+        ('chemise', 'Chemise'),
+        ('pantalon', 'Pantalon'),
+        ('jupe', 'Jupe'),
+        ('veste', 'Veste'),
+        ('manteau', 'Manteau'),
+        ('uniforme', 'Uniforme'),
+        ('tenue_traditionnelle', 'Tenue Traditionnelle'),
+        ('tenue_cérémonie', 'Tenue de Cérémonie'),
+        ('tenue_mariage', 'Tenue de Mariage'),
+        ('tenue_business', 'Tenue Business'),
+        ('tenue_casual', 'Tenue Casual'),
+        ('tenue_sport', 'Tenue Sport'),
+        ('accessoires', 'Accessoires'),
+        ('retouche', 'Retouche'),
+        ('sur_mesure', 'Sur Mesure'),
+        ('prêt_porter', 'Prêt-à-Porter'),
+        ('haute_couture', 'Haute Couture'),
+        ('couture_africaine', 'Couture Africaine'),
+        ('couture_européenne', 'Couture Européenne'),
+        ('couture_asiatique', 'Couture Asiatique'),
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='workshop_profile')
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -42,7 +67,13 @@ class Workshop(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(5)],
         default=0
     )
-    specialties = models.JSONField()
+    # Remplacer JSONField par un champ plus simple
+    specialties = models.JSONField(
+        default=list,
+        blank=True,
+        null=True,
+        help_text="Liste des spécialités de l'atelier (optionnel)"
+    )
     estimated_delivery_time = models.IntegerField(help_text="En jours")
     price_range_min = models.DecimalField(max_digits=10, decimal_places=2)
     price_range_max = models.DecimalField(max_digits=10, decimal_places=2)
@@ -59,6 +90,12 @@ class Workshop(models.Model):
         if not reviews:
             return 0
         return sum(review.rating for review in reviews) / len(reviews)
+
+    def get_specialties_display(self):
+        """Retourne les spécialités sous forme de texte lisible"""
+        if isinstance(self.specialties, list):
+            return ', '.join(self.specialties)
+        return str(self.specialties)
 
 class ClothingModel(models.Model):
     CATEGORY_CHOICES = [

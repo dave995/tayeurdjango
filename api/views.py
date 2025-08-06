@@ -80,7 +80,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class WorkshopViewSet(viewsets.ModelViewSet):
     queryset = Workshop.objects.filter(is_active=True)
     serializer_class = WorkshopSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.AllowAny]  # Permettre l'accès public
 
     def get_queryset(self):
         queryset = Workshop.objects.filter(is_active=True)
