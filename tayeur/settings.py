@@ -69,8 +69,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tayeur.wsgi.application'
 
+# Configuration de la base de données
+# LOCAL (Développement) - SQLite
 DATABASES = {
-    # 'default': {
+        # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': os.getenv('DB_NAME', 'tayeur_db'),
     #     'USER': os.getenv('DB_USER', 'postgres'),
@@ -78,10 +80,23 @@ DATABASES = {
     #     'HOST': os.getenv('DB_HOST', 'localhost'),
     #     'PORT': os.getenv('DB_PORT', '5432'),
     # }
-      'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+}
+
+# PRODUCTION (Render + NeonDB) - PostgreSQL
+# Pour déployer en production :
+# 1. Commenter la section LOCAL ci-dessus
+# 2. Décommenter la section PRODUCTION ci-dessous
+# 3. Ajouter votre DATABASE_URL dans les variables d'environnement Render
+
+import dj_database_url
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL')
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [

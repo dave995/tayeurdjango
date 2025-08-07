@@ -4,7 +4,7 @@ from pathlib import Path
 
 # Ajouter le chemin du projet au PYTHONPATH
 BASE_DIR = Path(__file__).resolve().parent.parent
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tayeur.settings')
 
 application = get_wsgi_application()
 
