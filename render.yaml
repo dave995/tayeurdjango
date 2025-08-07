@@ -5,8 +5,9 @@ services:
     buildCommand: |
       pip install -r requirements.txt
       python manage.py collectstatic --noinput
+    startCommand: |
       python manage.py migrate
-    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT
+      gunicorn wsgi:app --bind 0.0.0.0:$PORT
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: tayeur.settings
