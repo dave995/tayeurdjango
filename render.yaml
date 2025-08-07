@@ -23,8 +23,6 @@ services:
         value: https://tayeur-frontend.onrender.com
       - key: PYTHON_VERSION
         value: 3.11.7
-      - key: PSYCOPG_IMPL
-        value: psycopg
 
 databases:
   - name: tayeur-db
