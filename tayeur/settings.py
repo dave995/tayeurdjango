@@ -13,6 +13,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'tayeurdjango-4.onrender.com',
     'tayeurgestions.netlify.app',
+    'tayeurdjango-00l2.onrender.com',
     'tayeurgestionv2.netlify.app',
     'localhost:5173/',
     'localhost',
