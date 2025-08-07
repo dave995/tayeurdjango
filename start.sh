@@ -17,9 +17,9 @@ python check_env.py
 echo "Checking database connection..."
 python check_db.py
 
-# Appliquer les migrations avec le script de migration
-echo "Running migration script..."
-python migrate_db.py
+# Forcer la création des tables
+echo "Running force create tables script..."
+python force_create_tables.py
 
 echo "Starting Gunicorn server..."
 gunicorn wsgi:app --bind 0.0.0.0:$PORT
